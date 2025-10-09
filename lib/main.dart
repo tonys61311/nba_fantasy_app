@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
+import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
+import 'features/login/controllers/login_controller.dart';
+import 'features/login/controllers/register_controller.dart';
+import 'features/login/views/login_view.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -9,33 +21,130 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
+      title: 'NBA Fantasy App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      initialBinding: _InitialBinding(),
+      home: const LoginView(),
+      getPages: [
+        // You can expand routes later, keep placeholder for /home
+        GetPage(name: '/login', page: _loginPageFactory),
+        GetPage(name: '/register', page: _registerPageFactory),
+        GetPage(name: '/home', page: _homePageFactory),
+      ],
     );
   }
 }
 
+Widget _loginPageFactory() => const LoginView();
+
+Widget _registerPageFactory() => const Placeholder();
+
+Widget _homePageFactory() => const Scaffold(
+      body: Center(child: Text('Home')), // mock route
+    );
+
+class _InitialBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<LoginController>(() => LoginController());
+    Get.lazyPut<RegisterController>(() => RegisterController());
+  }
+}
+
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    this.auth,
+    this.httpClient,
+  });
 
   final String title;
+  final FirebaseAuth? auth;
+  final http.Client? httpClient;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  String? _resultText;
+  bool _loading = false;
 
-  void _incrementCounter() {
+  FirebaseAuth get _auth => widget.auth ?? FirebaseAuth.instance;
+  http.Client get _client => widget.httpClient ?? http.Client();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _resultText = '請輸入 Email 與 Password';
+      });
+      return;
+    }
     setState(() {
-      _counter++;
+      _loading = true;
+      _resultText = null;
     });
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final user = _auth.currentUser;
+      final idToken = await user?.getIdToken();
+      if (idToken == null) {
+        setState(() {
+          _resultText = '無法取得 idToken';
+        });
+        return;
+      }
+      final uri = Uri.parse('http://localhost:3000/auth/login');
+      final resp = await _client.post(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $idToken',
+        },
+      );
+      setState(() {
+        _resultText = resp.body;
+      });
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _resultText = '錯誤(${e.code}): ${e.message}';
+      });
+    } catch (e) {
+      setState(() {
+        _resultText = '錯誤: $e';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -45,24 +154,44 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            TextField(
+              key: const ValueKey('emailField'),
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            const SizedBox(height: 12),
+            TextField(
+              key: const ValueKey('passwordField'),
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Password'),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              key: const ValueKey('loginButton'),
+              onPressed: _loading ? null : _login,
+              child: _loading
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('登入'),
+            ),
+            const SizedBox(height: 20),
+            if (_resultText != null)
+              Text(
+                _resultText!,
+                key: const ValueKey('resultText'),
+              ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
