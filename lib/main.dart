@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'features/login/controllers/login_controller.dart';
 import 'features/login/controllers/register_controller.dart';
 import 'features/login/views/login_view.dart';
+import 'app/routes/app_router.dart';
+import 'core/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,38 +25,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'NBA Fantasy App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      // themeMode: ThemeMode.light,
       initialBinding: _InitialBinding(),
-      home: const LoginView(),
-      getPages: [
-        // You can expand routes later, keep placeholder for /home
-        GetPage(name: '/login', page: _loginPageFactory),
-        GetPage(name: '/register', page: _registerPageFactory),
-        GetPage(name: '/home', page: _homePageFactory),
-      ],
+      initialRoute: AppRoute.login.path,
+      getPages: AppRouter.pages,
     );
   }
 }
 
-Widget _loginPageFactory() => const LoginView();
-
-Widget _registerPageFactory() => const Placeholder();
-
-Widget _homePageFactory() => const Scaffold(
-      body: Center(child: Text('Home')), // mock route
-    );
-
 class _InitialBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<LoginController>(() => LoginController());
-    Get.lazyPut<RegisterController>(() => RegisterController());
+    Get.lazyPut<LoginController>(() => LoginController(), fenix: true);
+    Get.lazyPut<RegisterController>(() => RegisterController(), fenix: true);
   }
 }
 

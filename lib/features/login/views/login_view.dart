@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
-import 'register_view.dart';
-import '../../../widgets/model_tab_bar.dart';
+import '../../../app/routes/app_router.dart';
+// import '../../../widgets/model_tab_bar.dart';
+import '../../../widgets/app_text_field.dart';
+import '../../../widgets/app_button.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -15,7 +17,6 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   String? _idToken;
-  bool _obscurePassword = true;
 
   LoginController get _controller => Get.find<LoginController>();
 
@@ -85,41 +86,19 @@ class _LoginViewState extends State<LoginView> {
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
-                  const SizedBox(height: 24),
-                  const ModelTabBar(
-                    tabs: [
-                      TabItem(id: 'login', name: 'Login'),
-                      TabItem(id: 'register', name: 'Register'),
-                    ],
-                    activeId: 'login'
-                  ),
                   const SizedBox(height: 20),
-                  TextField(
+                  AppTextField(
                     key: const ValueKey('emailTextField'),
                     controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.2),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
+                    label: 'Email',
+                    type: AppTextFieldType.email,
                   ),
                   const SizedBox(height: 12),
-                  TextField(
+                  AppTextField(
                     key: const ValueKey('passwordTextField'),
                     controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.2),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                      ),
-                    ),
+                    label: 'Password',
+                    type: AppTextFieldType.password,
                   ),
                   const SizedBox(height: 8),
                   Align(
@@ -134,15 +113,12 @@ class _LoginViewState extends State<LoginView> {
                   const SizedBox(height: 4),
                   SizedBox(
                     height: 56,
-                    child: ElevatedButton(
+                    child: AppButton(
                       key: const ValueKey('loginButton'),
-                      onPressed: isLoading ? null : _handleEmailLogin,
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Text('Sign In'),
+                      label: 'Sign In',
+                      onPressed: _handleEmailLogin,
+                      backgroundColor: colorScheme.primary,
+                      // foregroundColor: colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -159,32 +135,31 @@ class _LoginViewState extends State<LoginView> {
                   const SizedBox(height: 16),
                   SizedBox(
                     height: 56,
-                    child: ElevatedButton(
+                    child: AppButton.google(
                       key: const ValueKey('googleSignInButton'),
-                      onPressed: isLoading ? null : _handleGoogleLogin,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.25),
-                        foregroundColor: colorScheme.onSurface,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.g_translate),
-                          SizedBox(width: 12),
-                          Text('Sign in with Google'),
-                        ],
-                      ),
+                      onPressed: _handleGoogleLogin,
                     ),
                   ),
                   const SizedBox(height: 24),
                   Center(
-                    child: GestureDetector(
-                      onTap: isLoading ? null : () => Get.to(() => const RegisterView()),
-                      child: Text(
-                        "Don't have an account? Register here.",
-                        style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.primary),
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        TextButton(
+                          onPressed: isLoading ? null : () => AppRouter.to(AppRoute.register),
+                          child: Text(
+                            'Register here.',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   if (_idToken != null) ...[
