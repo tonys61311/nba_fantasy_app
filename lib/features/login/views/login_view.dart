@@ -5,6 +5,8 @@ import '../../../app/routes/app_router.dart';
 // import '../../../widgets/model_tab_bar.dart';
 import '../../../widgets/app_text_field.dart';
 import '../../../widgets/app_button.dart';
+import '../../../core/services/auth_service.dart';
+import '../../../app/utils/app_notify.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -19,6 +21,7 @@ class _LoginViewState extends State<LoginView> {
   String? _idToken;
 
   LoginController get _controller => Get.find<LoginController>();
+  AuthService get _authService => Get.find<AuthService>();
 
   @override
   void initState() {
@@ -37,31 +40,28 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _handleEmailLogin() async {
     await _controller.login(_emailController.text.trim(), _passwordController.text);
     if (_controller.errorMessage.value.isNotEmpty) {
-      Get.snackbar('Login Failed', _controller.errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM);
+      AppNotify.snackbar('Login Failed', _controller.errorMessage.value);
       return;
     }
-    final user = _controller.currentUser;
-    final token = await user?.getIdToken();
+    final token = await _authService.getIdToken();
     if (!mounted) return;
     setState(() => _idToken = token);
     if (token != null) {
-      Get.snackbar('Login Success', token, snackPosition: SnackPosition.BOTTOM);
+      AppNotify.snackbar('Login Success', token);
     }
   }
 
   Future<void> _handleGoogleLogin() async {
     await _controller.signInWithGoogle();
     if (_controller.errorMessage.value.isNotEmpty) {
-      Get.snackbar('Google Login Failed', _controller.errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM);
+      AppNotify.snackbar('Google Login Failed', _controller.errorMessage.value);
       return;
     }
-    final token = await _controller.currentUser?.getIdToken();
+    final token = await _authService.getIdToken();
     if (!mounted) return;
     setState(() => _idToken = token);
     if (token != null) {
-      Get.snackbar('Google Login Success', token, snackPosition: SnackPosition.BOTTOM);
+      AppNotify.snackbar('Google Login Success', token);
     }
   }
 
@@ -70,10 +70,9 @@ class _LoginViewState extends State<LoginView> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return Scaffold(
-      body: SafeArea(
-        child: Center(
+      body: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Obx(() {
               final isLoading = _controller.isLoading.value;
               return Column(
@@ -171,7 +170,6 @@ class _LoginViewState extends State<LoginView> {
             }),
           ),
         ),
-      ),
     );
   }
 }

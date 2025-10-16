@@ -9,6 +9,7 @@ import 'features/login/controllers/login_controller.dart';
 import 'features/login/controllers/register_controller.dart';
 import 'app/routes/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/services/auth_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       initialBinding: _InitialBinding(),
       initialRoute: AppRoute.login.path,
       getPages: AppRouter.pages,
+      defaultTransition: GetPlatform.isIOS ? Transition.cupertino : Transition.rightToLeft,
     );
   }
 }
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
 class _InitialBinding extends Bindings {
   @override
   void dependencies() {
+    Get.put<AuthService>(AuthService().init(), permanent: true);
     Get.lazyPut<LoginController>(() => LoginController(), fenix: true);
     Get.lazyPut<RegisterController>(() => RegisterController(), fenix: true);
   }

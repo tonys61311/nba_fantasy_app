@@ -4,6 +4,7 @@ import '../controllers/register_controller.dart';
 import '../controllers/login_controller.dart';
 import '../../../widgets/app_text_field.dart';
 import '../../../widgets/app_button.dart';
+import '../../../app/utils/app_notify.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -43,21 +44,19 @@ class _RegisterViewState extends State<RegisterView> {
       _confirmPasswordController.text,
     );
     if (_controller.errorMessage.value.isNotEmpty) {
-      Get.snackbar('Register Failed', _controller.errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM);
+      AppNotify.snackbar('Register Failed', _controller.errorMessage.value);
       return;
     }
-    Get.snackbar('Register Success', '帳號已建立', snackPosition: SnackPosition.BOTTOM);
+    AppNotify.snackbar('Register Success', '帳號已建立');
   }
 
   Future<void> _handleGoogleContinue() async {
     await _loginController.signInWithGoogle();
     if (_loginController.errorMessage.value.isNotEmpty) {
-      Get.snackbar('Google Sign-In Failed', _loginController.errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM);
+      AppNotify.snackbar('Google Sign-In Failed', _loginController.errorMessage.value);
       return;
     }
-    Get.snackbar('Google Sign-In Success', '歡迎加入', snackPosition: SnackPosition.BOTTOM);
+    AppNotify.snackbar('Google Sign-In Success', '歡迎加入');
   }
 
   @override

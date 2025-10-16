@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nba_fantasy_app/core/api/app_api.dart';
+import 'package:nba_fantasy_app/core/services/auth_service.dart';
+import 'package:nba_fantasy_app/app/routes/app_router.dart';
 
 /// Adapter interface for Google Sign-In. Implementation will be provided later.
 abstract class GoogleSignInAdapter {
@@ -10,10 +12,12 @@ abstract class GoogleSignInAdapter {
 class LoginController extends GetxController {
   LoginController({FirebaseAuth? auth, GoogleSignInAdapter? googleAdapter})
       : _auth = auth ?? FirebaseAuth.instance,
-        _googleAdapter = googleAdapter;
+        _googleAdapter = googleAdapter,
+        _authService = Get.find<AuthService>();
 
   final FirebaseAuth _auth;
   final GoogleSignInAdapter? _googleAdapter;
+  final AuthService _authService;
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -32,10 +36,19 @@ class LoginController extends GetxController {
       // ignore: avoid_print
       print('login success: ${user?.email}');
 
-      // Call backend API after Firebase login
+      // 呼叫後端 API 並保存使用者資訊
       final backendUser = await AppApi.login();
+      _authService.setBackendUser(backendUser);
       // ignore: avoid_print
       print('backend user: uid=${backendUser.uid}, email=${backendUser.email}, role=${backendUser.role}');
+
+      // 依角色導頁（範例：只有 role = admin 或 user 才能進首頁）
+      final role = backendUser.role;
+      if (role == 'admin' || role == 'user') {
+        await AppRouter.offAll(AppRoute.home);
+      } else {
+        errorMessage.value = '沒有權限（role: $role）';
+      }
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? e.code;
     } catch (e) {
@@ -63,6 +76,16 @@ class LoginController extends GetxController {
       final user = _auth.currentUser;
       // ignore: avoid_print
       print('google login success: ${user?.email}');
+
+      // 與後端建立 session 並保存
+      final backendUser = await AppApi.login();
+      _authService.setBackendUser(backendUser);
+      final role = backendUser.role;
+      if (role == 'admin' || role == 'user') {
+        await AppRouter.offAll(AppRoute.home);
+      } else {
+        errorMessage.value = '沒有權限（role: $role）';
+      }
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? e.code;
     } catch (e) {
@@ -72,7 +95,8 @@ class LoginController extends GetxController {
     }
   }
 
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser => _authService.currentUser;
+  String? get currentRole => _authService.role;
 }
 
 
