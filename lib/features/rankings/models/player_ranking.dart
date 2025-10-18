@@ -1,22 +1,26 @@
 class PlayerRanking {
   final String id;
-  final String name;
-  final String team;
+  final String teamName;
+  final String teamAbbrev;
   final String position;
   final String avatarUrl;
   final String avatarBase64;
   final double fantasyPoints;
   final int rank;
+  final String firstName;
+  final String lastName;
 
   const PlayerRanking({
     required this.id,
-    required this.name,
-    required this.team,
+    required this.teamName,
+    required this.teamAbbrev,
     required this.position,
     required this.avatarUrl,
     required this.avatarBase64,
     required this.fantasyPoints,
     required this.rank,
+    required this.firstName,
+    required this.lastName,
   });
 
   PlayerRanking copyWith({
@@ -28,16 +32,20 @@ class PlayerRanking {
     String? avatarBase64,
     double? fantasyPoints,
     int? rank,
+    String? firstName,
+    String? lastName,
   }) {
     return PlayerRanking(
       id: id ?? this.id,
-      name: name ?? this.name,
-      team: team ?? this.team,
+      teamName: name ?? this.teamName,
+      teamAbbrev: team ?? this.teamAbbrev,
       position: position ?? this.position,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       avatarBase64: avatarBase64 ?? this.avatarBase64,
       fantasyPoints: fantasyPoints ?? this.fantasyPoints,
       rank: rank ?? this.rank,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
     );
   }
 }

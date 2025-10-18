@@ -27,13 +27,15 @@ class RankingsView extends StatelessWidget {
       final List<PlayerRanking> items = standings
           .map((t) => PlayerRanking(
                 id: t.teamId,
-                name: t.teamName,
-                team: t.teamAbbrev,
+                teamName: t.teamName,
+                teamAbbrev: t.teamAbbrev,
                 position: '',
                 avatarUrl: t.logoUrl,
                 avatarBase64: t.logoBase64,
                 fantasyPoints: t.points,
                 rank: t.standing,
+                firstName: t.owners.first.firstName,
+                lastName: t.owners.first.lastName,
               ))
           .toList();
 

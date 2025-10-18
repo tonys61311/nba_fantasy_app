@@ -62,12 +62,12 @@ class _ExpandedRanking extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(player.name,
+                  Text(player.teamName,
                       style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: theme.colorScheme.onSurface)),
                   const SizedBox(height: 8),
-                  Text('${player.team}, ${player.position}',
+                  Text('${player.firstName} ${player.lastName}',
                       style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurface.withOpacity(0.8))),
                   const SizedBox(height: 20),
@@ -136,12 +136,12 @@ class _CompactRanking extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(player.name,
+                Text(player.teamName,
                     style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: theme.colorScheme.onSurface)),
                 const SizedBox(height: 4),
-                Text('${player.team}, ${player.position}',
+                Text('${player.firstName} ${player.lastName}',
                     style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.8))),
               ],

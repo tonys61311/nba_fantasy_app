@@ -10,13 +10,15 @@ void main() {
 
   const sample = PlayerRanking(
     id: '1',
-    name: 'Nikola Jokic',
-    team: 'Denver Nuggets',
+    teamName: 'Nikola Jokic',
+    teamAbbrev: 'Denver Nuggets',
     position: 'C',
     avatarUrl: 'https://example.com/jokic.png',
     avatarBase64: '',
     fantasyPoints: 58.2,
     rank: 1,
+    firstName: 'Nikola',
+    lastName: 'Jokic',
   );
 
   group('RankingItem', () {
@@ -35,7 +37,7 @@ void main() {
 
       expect(find.text('View Profile'), findsOneWidget);
       expect(find.textContaining('Fantasy Points'), findsOneWidget);
-      expect(find.text(sample.name), findsOneWidget);
+      expect(find.text(sample.teamName), findsOneWidget);
     });
 
     testWidgets('renders compact mode without View Profile button and right-aligned points', (tester) async {
