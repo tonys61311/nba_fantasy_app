@@ -8,3 +8,5 @@ class RankingsView extends StatelessWidget {
     return const SizedBox.shrink();
   }
 }
+
+

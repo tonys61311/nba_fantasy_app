@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nba_fantasy_app/features/news/news_view.dart';
-import 'package:nba_fantasy_app/features/players/players_view.dart';
-import 'package:nba_fantasy_app/features/rankings/rankings_view.dart';
+import 'package:nba_fantasy_app/features/news/views/news_view.dart';
+import 'package:nba_fantasy_app/features/players/views/players_view.dart';
+import 'package:nba_fantasy_app/features/rankings/views/rankings_view.dart';
 
 enum BottomNavItem {
   news,

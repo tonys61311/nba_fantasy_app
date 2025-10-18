@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:nba_fantasy_app/features/home/home_view.dart';
-import 'package:nba_fantasy_app/features/rankings/rankings_view.dart';
+import 'package:nba_fantasy_app/features/rankings/views/rankings_view.dart';
 
 void main() {
   group('HomeView', () {
