@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nba_fantasy_app/core/env/env.dart';
 import 'package:nba_fantasy_app/core/models/user_response.dart';
+import 'package:nba_fantasy_app/core/models/league_standings_response.dart';
 
 /// A thin API client that attaches Firebase ID token automatically and
 /// decodes JSON payloads into typed models via a centralized registry.
@@ -48,12 +50,23 @@ class ApiBase {
       if (idToken != null) 'Authorization': 'Bearer $idToken',
     };
 
-    return _dio.request<dynamic>(
+    final Response<dynamic> response = await _dio.request<dynamic>(
       path,
       data: data,
       queryParameters: queryParameters,
       options: Options(method: method, headers: headers),
     );
+    if (kDebugMode) {
+      try {
+        final pretty = _prettifyJson(response.data);
+        // ignore: avoid_print
+        print('[API $method] $path -> ${response.statusCode}\n$pretty');
+      } catch (_) {
+        // ignore: avoid_print
+        print('[API $method] $path -> ${response.statusCode}\n${response.data}');
+      }
+    }
+    return response;
   }
 
   T _decode<T>(dynamic data) {
@@ -68,8 +81,15 @@ class ApiBase {
   // Central registry. You can extend this with new models.
   static T _fromJson<T>(Map<String, dynamic> json) {
     if (T == UserResponse) return UserResponse.fromJson(json) as T;
+    // League standings decoding
+    if (T == LeagueStandingsResponse) return LeagueStandingsResponse.fromJson(json) as T;
 
     throw StateError('No decoder registered for type $T');
+  }
+
+  static String _prettifyJson(dynamic data) {
+    final dynamic jsonMap = data is String ? json.decode(data) : data;
+    return const JsonEncoder.withIndent('  ').convert(jsonMap);
   }
 }
 

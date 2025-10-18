@@ -18,6 +18,7 @@ class LoginController extends GetxController {
   final FirebaseAuth _auth;
   final GoogleSignInAdapter? _googleAdapter;
   final AuthService _authService;
+  AppApi get _api => AppApi();
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -37,7 +38,7 @@ class LoginController extends GetxController {
       print('login success: ${user?.email}');
 
       // 呼叫後端 API 並保存使用者資訊
-      final backendUser = await AppApi.login();
+      final backendUser = await _api.login();
       _authService.setBackendUser(backendUser);
       // ignore: avoid_print
       print('backend user: uid=${backendUser.uid}, email=${backendUser.email}, role=${backendUser.role}');
@@ -78,7 +79,7 @@ class LoginController extends GetxController {
       print('google login success: ${user?.email}');
 
       // 與後端建立 session 並保存
-      final backendUser = await AppApi.login();
+      final backendUser = await _api.login();
       _authService.setBackendUser(backendUser);
       final role = backendUser.role;
       if (role == 'admin' || role == 'user') {
