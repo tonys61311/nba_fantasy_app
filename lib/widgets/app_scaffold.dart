@@ -45,17 +45,17 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppHeader(title: _currentItem.title),
+      // Use surface per Material 3 guidance (analyzer warns on background)
+      backgroundColor: theme.colorScheme.surface,
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: BottomNavItem.views,
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentItem: _currentItem,
-        onChanged: _onNavChanged,
-      ),
+      bottomNavigationBar: BottomNavBar(currentItem: _currentItem, onChanged: _onNavChanged, pageController: _pageController),
     );
   }
 }

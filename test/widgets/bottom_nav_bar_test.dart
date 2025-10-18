@@ -8,11 +8,13 @@ import 'package:nba_fantasy_app/core/enum/bottom_nav_item.dart';
 void main() {
   group('BottomNavBar', () {
     testWidgets('should render three enum-based items', (tester) async {
+      final controller = PageController(initialPage: BottomNavItem.rankings.getIndexInItems);
       await tester.pumpWidget(
-        const GetMaterialApp(
+        GetMaterialApp(
           home: Scaffold(
             bottomNavigationBar: BottomNavBar(
               currentItem: BottomNavItem.rankings,
+              pageController: controller,
             ),
           ),
         ),
@@ -25,6 +27,7 @@ void main() {
 
     testWidgets('should call onChanged with tapped BottomNavItem', (tester) async {
       BottomNavItem? tapped;
+      final controller = PageController(initialPage: BottomNavItem.news.getIndexInItems);
       await tester.pumpWidget(
         GetMaterialApp(
           getPages: AppRouter.pages,
@@ -32,6 +35,7 @@ void main() {
             bottomNavigationBar: BottomNavBar(
               currentItem: BottomNavItem.news,
               onChanged: (item) => tapped = item,
+              pageController: controller,
             ),
             body: const SizedBox.shrink(),
           ),

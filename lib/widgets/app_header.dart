@@ -14,7 +14,27 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final Color foreground = theme.appBarTheme.foregroundColor ?? theme.colorScheme.onSurface;
     return AppBar(
       centerTitle: true,
-      title: Text(title),
+      title: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 220),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (child, animation) {
+          final fade = FadeTransition(opacity: animation, child: child);
+          final slide = SlideTransition(
+            position: animation.drive(
+              Tween<Offset>(begin: const Offset(0.0, 0.15), end: Offset.zero).chain(
+                CurveTween(curve: Curves.easeOutCubic),
+              ),
+            ),
+            child: fade,
+          );
+          return slide;
+        },
+        child: Text(
+          title,
+          key: ValueKey<String>(title),
+        ),
+      ),
       leading: IconButton(
         icon: const Icon(Icons.sports_basketball_outlined),
         onPressed: () {},
@@ -27,7 +47,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           color: foreground,
         ),
       ],
-      backgroundColor: theme.appBarTheme.backgroundColor,
+      // Slightly darker header background from the theme palette
+      backgroundColor: theme.colorScheme.surfaceContainerHighest,
       foregroundColor: foreground,
     );
   }
