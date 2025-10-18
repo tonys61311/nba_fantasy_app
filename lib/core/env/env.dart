@@ -7,9 +7,12 @@ class Env {
 
   // Common keys (add more as needed)
   static const String _kBaseUrl = 'BASE_URL';
+  static const String _kTestEmail = 'TEST_EMAIL';
+  static const String _kTestPassword = 'TEST_PASSWORD';
 
-  /// Base URL for backend API.
   static String get baseUrl => _readString(_kBaseUrl);
+  static String get testEmail => _readString(_kTestEmail);
+  static String get testPassword => _readString(_kTestPassword);
 
   /// Generic readers
   static String _readString(String key, {String? fallback}) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dot;
 import 'package:nba_fantasy_app/features/login/controllers/register_controller.dart';
 import 'package:nba_fantasy_app/features/login/views/register_view.dart';
 import 'package:nba_fantasy_app/features/login/views/login_view.dart';
@@ -11,6 +12,14 @@ import 'package:nba_fantasy_app/features/login/controllers/login_controller.dart
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() async {
+    dot.dotenv.testLoad(fileInput: '''
+BASE_URL=http://localhost:3000
+TEST_EMAIL=user@test.com
+TEST_PASSWORD=pass1234
+''');
+  });
 
   testWidgets('RegisterView shows fields and register button', (tester) async {
     final auth = MockFirebaseAuth(signedIn: false);

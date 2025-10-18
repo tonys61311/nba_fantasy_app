@@ -1,14 +1,14 @@
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../features/login/views/login_view.dart';
 import '../../features/login/views/register_view.dart';
+import '../../features/home/home_view.dart';
 
 /// 中央路由定義：避免以字串導頁
 enum AppRoute {
   login('/login'),
   register('/register'),
-  home('/home');
+  home('/home'),;
 
   const AppRoute(this.path);
   final String path;
@@ -20,10 +20,7 @@ class AppRouter {
   static final List<GetPage<dynamic>> pages = <GetPage<dynamic>>[
     GetPage(name: AppRoute.login.path, page: () => const LoginView()),
     GetPage(name: AppRoute.register.path, page: () => const RegisterView()),
-    GetPage(
-      name: AppRoute.home.path,
-      page: () => const Placeholder(), // TODO: replace with real HomeView
-    ),
+    GetPage(name: AppRoute.home.path, page: () => const HomeView()),
   ];
 
   static Future<T?> to<T>(AppRoute route, {dynamic arguments, int? id}) async {

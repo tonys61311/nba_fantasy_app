@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'features/login/controllers/login_controller.dart';
 import 'features/login/controllers/register_controller.dart';
 import 'app/routes/app_router.dart';
-import 'core/theme/app_theme.dart';
+import 'app/theme/app_theme.dart';
 import 'core/services/auth_service.dart';
 
 Future<void> main() async {
@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'NBA Fantasy App',
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      theme: AppTheme.orange.light,
+      darkTheme: AppTheme.orange.dark,
       // themeMode: ThemeMode.light,
       initialBinding: _InitialBinding(),
       initialRoute: AppRoute.login.path,

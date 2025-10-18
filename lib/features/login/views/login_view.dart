@@ -7,6 +7,7 @@ import '../../../widgets/app_text_field.dart';
 import '../../../widgets/app_button.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../app/utils/app_notify.dart';
+import 'package:nba_fantasy_app/core/env/env.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -26,8 +27,8 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
+    _emailController = TextEditingController(text: Env.testEmail);
+    _passwordController = TextEditingController(text: Env.testPassword);
   }
 
   @override
