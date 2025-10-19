@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'dart:typed_data';
+import 'package:nba_fantasy_app/app/utils/app_utils.dart';
 import 'package:nba_fantasy_app/features/rankings/models/player_ranking.dart';
 
 enum RankingDisplayMode { expanded, compact }
@@ -51,7 +50,7 @@ class _ExpandedRanking extends StatelessWidget {
               child: AspectRatio(
                   aspectRatio: 16 / 11,
                   child: Image.memory(
-                    _decodeDataUrl(player.avatarBase64),
+                    AppUtils.decodeDataUrl(player.avatarBase64),
                     fit: BoxFit.cover,
                     errorBuilder: (c, e, s) => Container(
                         color: theme.colorScheme.surfaceContainerHighest),
@@ -121,7 +120,7 @@ class _CompactRanking extends StatelessWidget {
           ClipRRect(
               borderRadius: BorderRadius.circular(28),
               child: Image.memory(
-                _decodeDataUrl(player.avatarBase64),
+                AppUtils.decodeDataUrl(player.avatarBase64),
                 width: 48,
                 height: 48,
                 fit: BoxFit.cover,
@@ -157,10 +156,3 @@ class _CompactRanking extends StatelessWidget {
   }
 }
 
-// Decode data URL like 'data:image/png;base64,....' into raw bytes
-Uint8List _decodeDataUrl(String dataUrl) {
-  final commaIndex = dataUrl.indexOf(',');
-  if (commaIndex == -1) return Uint8List(0);
-  final base64Part = dataUrl.substring(commaIndex + 1);
-  return base64Decode(base64Part);
-}

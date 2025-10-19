@@ -25,8 +25,8 @@ class PlayerRanking {
 
   PlayerRanking copyWith({
     String? id,
-    String? name,
-    String? team,
+    String? teamName,
+    String? teamAbbrev,
     String? position,
     String? avatarUrl,
     String? avatarBase64,
@@ -37,8 +37,8 @@ class PlayerRanking {
   }) {
     return PlayerRanking(
       id: id ?? this.id,
-      teamName: name ?? this.teamName,
-      teamAbbrev: team ?? this.teamAbbrev,
+      teamName: teamName ?? this.teamName,
+      teamAbbrev: teamAbbrev ?? this.teamAbbrev,
       position: position ?? this.position,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       avatarBase64: avatarBase64 ?? this.avatarBase64,

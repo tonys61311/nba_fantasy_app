@@ -26,7 +26,7 @@ void main() {
       await tester.pumpWidget(
         GetMaterialApp(
           theme: AppTheme.dark(),
-          home: Scaffold(
+          home: const Scaffold(
             body: RankingItem(
               player: sample,
               mode: RankingDisplayMode.expanded,
