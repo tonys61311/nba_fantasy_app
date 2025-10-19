@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nba_fantasy_app/features/rankings/controllers/rankings_controller.dart';
 import 'package:nba_fantasy_app/features/rankings/models/player_ranking.dart';
-import 'package:nba_fantasy_app/features/rankings/widgets/ranking_item.dart';
+import 'package:nba_fantasy_app/features/rankings/widgets/compact_ranking_item.dart';
+import 'package:nba_fantasy_app/features/rankings/widgets/expanded_ranking_item.dart';
 import 'package:nba_fantasy_app/core/models/league_standings_response.dart';
 
 class RankingsView extends StatelessWidget {
@@ -43,10 +44,13 @@ class RankingsView extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
         itemBuilder: (_, index) {
-          final mode = index == 0 ? RankingDisplayMode.expanded : RankingDisplayMode.compact;
+          final player = items[index];
+          final isExpanded = index == 0;
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: RankingItem(player: items[index], mode: mode),
+            child: isExpanded
+                ? ExpandedRankingItem(player: player)
+                : CompactRankingItem(player: player),
           );
         },
       );

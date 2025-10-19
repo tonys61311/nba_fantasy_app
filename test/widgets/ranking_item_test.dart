@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:nba_fantasy_app/app/theme/app_theme.dart';
 import 'package:nba_fantasy_app/features/rankings/models/player_ranking.dart';
-import 'package:nba_fantasy_app/features/rankings/widgets/ranking_item.dart';
+import 'package:nba_fantasy_app/features/rankings/widgets/compact_ranking_item.dart';
+import 'package:nba_fantasy_app/features/rankings/widgets/expanded_ranking_item.dart';
 
 void main() {
   Get.testMode = true;
@@ -21,16 +22,13 @@ void main() {
     lastName: 'Jokic',
   );
 
-  group('RankingItem', () {
-    testWidgets('renders expanded mode with View Profile button', (tester) async {
+  group('RankingItems', () {
+    testWidgets('renders expanded item with View Profile button', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
           theme: AppTheme.dark(),
-          home: const Scaffold(
-            body: RankingItem(
-              player: sample,
-              mode: RankingDisplayMode.expanded,
-            ),
+          home: Scaffold(
+            body: ExpandedRankingItem(player: sample),
           ),
         ),
       );
@@ -40,16 +38,15 @@ void main() {
       expect(find.text(sample.teamName), findsOneWidget);
     });
 
-    testWidgets('renders compact mode without View Profile button and right-aligned points', (tester) async {
+    testWidgets('renders compact item without View Profile button and right-aligned points', (tester) async {
       await tester.pumpWidget(
         GetMaterialApp(
           theme: AppTheme.dark(),
           home: Scaffold(
             body: SizedBox(
               width: 360,
-              child: RankingItem(
+              child: CompactRankingItem(
                 player: sample.copyWith(rank: 2, fantasyPoints: 55.9),
-                mode: RankingDisplayMode.compact,
               ),
             ),
           ),
