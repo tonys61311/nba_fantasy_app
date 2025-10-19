@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:nba_fantasy_app/app/utils/app_log.dart';
 import 'package:nba_fantasy_app/core/env/env.dart';
 import 'package:nba_fantasy_app/core/models/user_response.dart';
 import 'package:nba_fantasy_app/core/models/league_standings_response.dart';
@@ -57,14 +58,7 @@ class ApiBase {
       options: Options(method: method, headers: headers),
     );
     if (kDebugMode) {
-      try {
-        final pretty = _prettifyJson(response.data);
-        // ignore: avoid_print
-        print('[API $method] $path -> ${response.statusCode}\n$pretty');
-      } catch (_) {
-        // ignore: avoid_print
-        print('[API $method] $path -> ${response.statusCode}\n${response.data}');
-      }
+      AppLog('[API $method] $path -> ${response.statusCode}\n${response.data}');
     }
     return response;
   }
